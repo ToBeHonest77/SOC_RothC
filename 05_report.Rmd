@@ -1,0 +1,49 @@
+---
+title: "05_report"
+author: "Tobias Ruhnau"
+date: "2024-11-06"
+output: html_document
+---
+
+#-- Work in progress
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r libraries}
+library(Metrics)
+library(tidyverse)
+library(caret)
+```
+
+```{r calculate}
+# Calculate RMSE
+result <- rmse(fb_SOC$SOC_stock_Mg.ha, rows_C_Model) # 1.277
+
+# Calculate RMSE
+rmse_value <- RMSE(rows_C_Model, fb_SOC$SOC_stock_Mg.ha) # same output as library(Metrics)
+print(paste("RMSE:", rmse_value))
+
+# # Create your data and fit a linear model
+# data <- data.frame(x = rows_C_Model,
+#                    y = fb_SOC$SOC_stock_Mg.ha)
+# fit <- lm(y ~ x, data = data)
+# 
+# # Calculate RMSE
+# rmse <- sqrt(mean(residuals(fit)^2))
+# 
+# # Create the plot
+# ggplot(data, aes(x, y)) +
+#   geom_point() +
+#   geom_smooth(method = "lm", se = FALSE, color = "red") +
+#   annotate("text", x = min(data$x), y = max(data$y), 
+#            label = paste("RMSE =", round(rmse, 2)), 
+#            hjust = 0, vjust = 1) +
+#   labs(title = "Scatter Plot with RMSE", x = "X", y = "Y")
+```
+
+```{r plot, echo=FALSE}
+
+```
+

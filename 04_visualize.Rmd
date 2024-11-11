@@ -1,0 +1,198 @@
+---
+title: "04_visualize"
+author: "Tobias Ruhnau"
+date: "2024-11-06"
+output: html_document
+---
+#--- Preperation
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r libraries}
+library(ggplot2)
+library(gridExtra)
+```
+
+#--- Control in Farako-Ba
+
+```{r C-FB pool sizes, echo=FALSE}
+# Plot the final pool sizes
+ggplot(FB_C_final_pools, aes(x = Pool)) +
+    geom_bar(aes(y = Model, fill = "Model"), stat = "identity", position = "dodge") +
+    labs(title = "C-FB Final Pool Sizes",
+         x = "Carbon Pools",
+         y = "Carbon Stock (Mg/ha)",
+         fill = "Model") +
+    theme_minimal()
+```
+
+```{r C-FB total C, echo=FALSE}
+# Plot total carbon stocks
+ggplot(FB_C_total_C, aes(x = Model, y = Total_C, fill = Model)) +
+    geom_bar(stat = "identity") +
+    labs(title = "C-FB Total Carbon Stocks",
+         x = "Model",
+         y = "Total Carbon Stock (Mg/ha)") +
+    theme_minimal()
+```
+
+```{r C-FB spin-up & pred, echo=FALSE}
+# Create a dataframe with rowsums and define time axis
+df <- data.frame(
+  time = c(1:6001, 6002:6241),
+  value = c(FB_C_rows_C_Spinup, FB_C_rows_C_Model),
+  series = c(rep("Spin_up", 6001), rep("Prediction", 240))
+)
+
+# Create the plot with pre-defined time axis
+ggplot(df, aes(x = time, y = value, color = series)) +
+  geom_line() +
+  scale_x_continuous(
+    breaks = c(0, 6000, 6241),
+    labels = c("-500", "0", "20"),
+    limits = c(0, 6241)
+  ) +
+  labs(title = "C-FB Spin-up & Prediction",
+       x = "Years",
+       y = "Value") +
+  theme_minimal(base_size = 20) +
+  theme(legend.position = "bottom")
+
+# # Save the plot
+# ggsave("pools_model_FYM-FB", device="png", "plots/farako_ba/treatments/", width = 10, height = 6)
+```
+
+```{r C-FB obs vs pred, echo=FALSE}
+# Create a data frame with years, months, and values
+df1 <- data.frame(
+  year = rep(1:10, each = 6), # edit
+  month = rep(5:10, times = 10), # edit
+  values = FB_C_rows_C_Model
+)
+
+# Convert year and month to a proper date
+df1$date <- as.Date(paste(df$year, df$month, "01", sep = "-"))
+
+# Create a data frame for the Farako-ba points
+C_FB <- data.frame(
+  eID = rep("Farako-Ba", 3),
+  tID = rep("C-FB", 3),
+  date = as.Date(c("0001-05-01", "0003-05-01", "0005-05-01")),
+  values = c(10.2, 10.8, 9.34) # Exact values from literature found in fb_SOC
+)
+
+# Create the ggplot
+ggplot() +
+  geom_line(data = df1, aes(x = date, y = values), color = "blue", size = 1) +
+  geom_point(data = C_FB, aes(x = date, y = values), color = "green", size = 5) +
+  geom_text(data = C_FB, aes(x = date, y = values, label = paste(eID, values)), 
+            vjust = -1.5, hjust = 0.5, color = "black", fontface = "bold") +
+  scale_x_date(date_breaks = "1 years", date_labels = "%Y", 
+               limits = as.Date(c("0001-05-01", "0010-10-01"))) + # edit
+  scale_y_continuous(breaks = seq(0, 60, by = 0.5)) +
+  labs(title = "C-FB Observation vs. Prediction",
+       x = "Year",
+       y = "SOC stock (Mg/ha)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "bottom")
+
+# # Save the plot
+# ggsave("pools_model_FYM-FB", device="png", "plots/farako_ba/treatments/", width = 10, height = 6)
+```
+
+#--- FYM in Farako-Ba
+
+```{r FYM-FB final pools, echo=FALSE}
+# Plot the final pool sizes
+ggplot(FB_FYM_final_pools, aes(x = Pool)) +
+    geom_bar(aes(y = Model, fill = "Model"), stat = "identity", position = "dodge") +
+    labs(title = "FYM-FB Final Pool Sizes",
+         x = "Carbon Pools",
+         y = "Carbon Stock (Mg/ha)",
+         fill = "Model") +
+    theme_minimal()
+
+# # Save the plot
+# ggsave("pools_model_FYM-FB", device="png", "plots/farako_ba/treatments/", width = 10, height = 6)
+```
+
+```{r FYM-FB total C, echo=FALSE}
+# Plot total carbon stocks
+ggplot(FB_FYM_total_C, aes(x = Model, y = Total_C, fill = Model)) +
+    geom_bar(stat = "identity") +
+    labs(title = "FYM-FB Total Carbon Stocks",
+         x = "Model",
+         y = "Total Carbon Stock (Mg/ha)") +
+    theme_minimal()
+
+# # Save the plot
+# ggsave("pools_model_FYM-FB", device="png", "plots/farako_ba/treatments/", width = 10, height = 6)
+```
+
+```{r FYM-FB spin-up & pred, echo=FALSE}
+# Create a dataframe with rowsums and define time axis
+df <- data.frame(
+  time = c(1:6001, 6002:6241),
+  value = c(FB_FYM_rows_C_Spinup, FB_FYM_rows_C_Model),
+  series = c(rep("Spin_up", 6001), rep("Prediction", 240))
+)
+
+# Create the plot with pre-defined time axis
+ggplot(df, aes(x = time, y = value, color = series)) +
+  geom_line() +
+  scale_x_continuous(
+    breaks = c(0, 6000, 6241),
+    labels = c("-500", "0", "20"),
+    limits = c(0, 6241)
+  ) +
+  labs(title = "FYM-FB Spin-up & Prediction",
+       x = "Years",
+       y = "Value") +
+  theme_minimal(base_size = 20) +
+  theme(legend.position = "bottom")
+
+# # Save the plot
+# ggsave("pools_model_FYM-FB", device="png", "plots/farako_ba/treatments/", width = 10, height = 6)
+```
+
+```{r FYM-FB obs vs pred}
+# Create a data frame with years, months, and values
+df1 <- data.frame(
+  year = rep(1:20, each = 12), # Year = July to June
+  month = rep(1:12, times = 20), # Month 1 = July, Month 12 = June
+  values = FB_FYM_rows_C_Model
+)
+
+# Convert year and month to a proper date
+df1$date <- as.Date(paste(df1$year, df1$month, "01", sep = "-"))
+
+# Create a data frame for the Farako-ba points
+FYM_FB <- data.frame(
+  eID = rep("Farako-Ba", 3),
+  tID = rep("PK+ME-FB", 3),
+  date = as.Date(c("0001-05-01", "0004-05-01", "0007-05-01")), # Years between each measurement
+  values = c(12, 13.1, 12.8) # Exact values from literature found in fb_SOC
+)
+
+# Create the ggplot
+ggplot() +
+  geom_line(data = df1, aes(x = date, y = values), color = "blue", size = 1) +
+  geom_point(data = FYM_FB, aes(x = date, y = values), color = "green", size = 5) +
+  geom_text(data = FYM_FB, aes(x = date, y = values, label = paste(eID, values)), 
+            vjust = -1.5, hjust = 0.5, color = "black", fontface = "bold") +
+  scale_x_date(date_breaks = "1 years", date_labels = "%Y", 
+               limits = as.Date(c("0001-01-01", "0020-06-01"))) +
+  scale_y_continuous(breaks = seq(0, 60, by = 0.5)) +
+  labs(title = "FYME-FB Observation vs. Prediction",
+       x = "Year",
+       y = "SOC stock (Mg/ha)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "bottom")
+
+# # Save the plot
+# ggsave("pools_model_FYM-FB", device="png", "plots/farako_ba/treatments/", width = 10, height = 6)
+```
