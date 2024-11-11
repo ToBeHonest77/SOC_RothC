@@ -22,9 +22,17 @@ library(ggplot2)
 
 ```{r read}
 # Using terra package, faster than raster-package
-temp_data <- terra::rast("ERA5/ERA5_Land_monthly_temperature_Layer_Stack_westafrica.tif")
-prec_data <- terra::rast("ERA5/ERA5_Land_Monthly_Prec_Layer_Stack_westafrica.tif")
-evapo_data <- terra::rast("ERA5/ERA5_Land_monthly_potential_evapo_Layer_Stack_westafrica.tif")
+temp_data <- terra::rast( # Whole path to wd, usually not necessary
+  "C:/Users/t.ruhnau/OneDrive - Unique/Dokumente/ERA5/ERA5_Land_monthly_temperature_Layer_Stack_westafrica.tif")
+prec_data <- terra::rast(
+  "C:/Users/t.ruhnau/OneDrive - Unique/Dokumente/ERA5/ERA5_Land_Monthly_Prec_Layer_Stack_westafrica.tif")
+evapo_data <- terra::rast(
+  "C:/Users/t.ruhnau/OneDrive - Unique/Dokumente/ERA5/ERA5_Land_monthly_potential_evapo_Layer_Stack_westafrica.tif")
+evapo_data <- terra::rast(
+  "C:/Users/t.ruhnau/OneDrive - Unique/Dokumente/ERA5/ERA5_Land_monthly_potential_evapo_Layer_Stack_westafrica.tif")
+
+# Read filtered tbls from output-directory
+tbl_experiment <- read.csv2("C:/Users/t.ruhnau/OneDrive - Unique/Dokumente/output/filter_tbls/tbl_experiment.csv")
 ```
 
 ```{r transform}
@@ -32,7 +40,7 @@ evapo_data <- terra::rast("ERA5/ERA5_Land_monthly_potential_evapo_Layer_Stack_we
 locations <- data.frame(
     x = tbl_experiment$Longitude,
     y = tbl_experiment$Latitude,
-    Experiment = tbl_experiment$`Experiment ID`
+    Experiment = tbl_experiment$Experiment.ID
 )
 
 # Convert to numeric values
@@ -42,11 +50,13 @@ locations$y <- as.numeric(locations$y)
 # Remove NAs
 locations <- na.omit(locations)
 
-# Drop non-numeric column
+# Drop non-numeric column = Experiment name
 locations <- locations[-3]
 
 # Convert coordinates to spatial points
-points <- SpatialPoints(locations, proj4string = crs(temp_data))
+points <- SpatialPoints(locations, proj4string = crs(temp_data)) # This is not working anymore :(
+
+
 points_sf <- st_as_sf(points)
 # points_sf$name <- c("Farako-Ba", "Nioro-du-rip", "Ibadan", "Mbeere", "Saponé", "Kouvé", 
 #                "Embu", "Machanga", "Sidada", "Aludeka", "Gagnoa", "Sefwi-Wiawso", "Ntarla")

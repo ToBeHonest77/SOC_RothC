@@ -13,9 +13,68 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r libraries}
 library(ggplot2)
 library(gridExtra)
+library(tidyr)
 ```
 
-#--- Control in Farako-Ba
+#--- 01_import.Rmd
+
+```{r plot import, echo=FALSE}
+## Load dataframes from 01_import.Rmd
+
+# Calculate the overall min and max of SOC_stock
+y_min <- min(ndp_datasoil$SOC_stock_Mg.ha, na.rm = TRUE)
+y_max <- max(ndp_datasoil$SOC_stock_Mg.ha, na.rm = TRUE)
+
+# Calculate a reasonable step size (e.g., 1/10th of the range)
+y_step <- (y_max - y_min) / 10
+
+# Create a list of plots, one for each treatment
+plot_list <- ndp_datasoil %>%
+  split(.$tID) %>% # split plots for each treatment
+  map(function(data) {
+    ggplot(data, aes(x = Sample_year, y = SOC_stock_Mg.ha, group = 1)) +
+      geom_line() +
+      geom_point() +
+      theme_minimal(base_line_size = 20) +
+      labs(title = paste("Treatment:", unique(data$tID)),
+           x = "Year",
+           y = "SOC stock (Mg/ha)") +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1),
+            plot.title = element_text(size = 10),
+            axis.title = element_text(size = 9),
+            axis.text = element_text(size = 8)) +
+      scale_y_continuous(
+        limits = c(y_min, y_max),
+                         breaks = seq(y_min, y_max, by = y_step)) +  # Set common y-axis limits
+      scale_x_continuous(
+        breaks = function(x) seq(ceiling(min(x)), floor(max(x)), by = 1), # Change according to years (1 = every year)
+        labels = function(x) format(x, nsmall = 0)
+      )
+  })
+
+
+# please note: C2-FB shows the natural grassland and hence, has the highest SOC stock (no conversion)
+# please note: Nioro-du-rip has always the same SOC stock measured -> should be checked!
+combined_plot <- do.call(grid.arrange, c(plot_list, ncol = length(plot_list)))
+ 
+# ## If necessary, this helps!
+# # Arrange the plots in a 2x5 grid (5 plots in first row, 4 in second)
+# combined_plot <- grid.arrange(
+#   grobs = plot_list,
+#   layout_matrix = rbind(1:5, c(6:9, NA)),
+#   widths = rep(1, 5),
+#   heights = c(1, 1)
+# )
+
+# Display the combined plot
+plot(combined_plot)
+
+# # Save the plot
+# ggsave("C:/Users/t.ruhnau/OneDrive - Unique/Dokumente/plots/nioro_du_rip/SOC_treatments_NDP.png",
+#        combined_plot, width = 20, height = 10, units = "in") # Create folder manually
+```
+
+#--- 03.1.1.rothc_C-FB.Rmd
 
 ```{r C-FB pool sizes, echo=FALSE}
 # Plot the final pool sizes
@@ -103,7 +162,7 @@ ggplot() +
 # ggsave("pools_model_FYM-FB", device="png", "plots/farako_ba/treatments/", width = 10, height = 6)
 ```
 
-#--- FYM in Farako-Ba
+#--- 03.1.2.rothc_FYM-FB.Rmd
 
 ```{r FYM-FB final pools, echo=FALSE}
 # Plot the final pool sizes
