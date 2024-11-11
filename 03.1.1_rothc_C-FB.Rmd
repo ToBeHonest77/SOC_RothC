@@ -129,8 +129,9 @@ Evap_Spinup <- mm1_spinup %>%
 
 Evap_Spinup <- Evap_Spinup[order(match(Evap_Spinup$Month, new_order)), ]
 
-# Try to convert to open-pan evaporation by multiplying with 0.75
-Evap_Spinup$Evap <- 0.75*Evap_Spinup$Evap # suggested by Coleman et al. 1996 (doi: 10.1007/978-3-642-61094-3_17)
+# # Try to convert to open-pan evaporation by multiplying with 0.75
+# ## Not sure if this step is necessary
+# Evap_Model$Evap <- 0.75*Evap_Model$Evap # suggested by Coleman et al. 1996 (doi: 10.1007/978-3-642-61094-3_17)
 ```
 
 ```{r soil spin-up}
@@ -232,6 +233,20 @@ Prec_Model <- mm2_pred %>%
 # Reindex the dataframe to start with July (7)
 Prec_Model <- Prec_Model[order(match(Prec_Model$Month, new_order)), ]
 
+# Change certain values of Precipitation to actual measurements from literature
+Prec_Model1 <- Prec_Model %>%
+  mutate(Prec = case_when(
+    Month == 5 ~ 109,
+    Month == 6 ~ 118,
+    Month == 7 ~ 197,
+    Month == 8 ~ 255,
+    Month == 9 ~ 189,
+    Month == 10 ~ 68,
+    TRUE ~ Prec
+  ))
+# Reassing for further processing
+Prec_Model <- Prec_Model1
+
 # Mean monthly evaporation for 1991-2024 (ERA5)
 Evap_Model <- mm2_pred %>%
   filter(Variable == "Evapo") %>%
@@ -240,9 +255,10 @@ Evap_Model <- mm2_pred %>%
 
 # Reindex the dataframe to start with July (7)
 Evap_Model <- Evap_Model[order(match(Evap_Model$Month, new_order)), ]
-
-# Try to convert to open-pan evaporation by multiplying with 0.75
-Evap_Model$Evap <- 0.75*Evap_Model$Evap # suggested by Coleman et al. 1996 (doi: 10.1007/978-3-642-61094-3_17)
+ 
+# # Try to convert to open-pan evaporation by multiplying with 0.75
+# ## Not sure if this step is necessary
+# Evap_Model$Evap <- 0.75*Evap_Model$Evap # suggested by Coleman et al. 1996 (doi: 10.1007/978-3-642-61094-3_17)
 
 ### According to this study, potential evaporation does not exceed 300 mm/month in WA #?#https://link.springer.com/article/10.1007/s42452-019-1456-6
 ```
@@ -279,7 +295,7 @@ df_fym <- data.frame(
 fT_Model=fT.RothC(Temp_Model[,2]) # Temperature effects per month 
 fW_Model=fW.RothC(P=(Prec_Model[,2]), E=(Evap_Model[,2]), # Rain and evaporation effects
             S.Thick = soil.thick_Model, pClay = clay_Model, # pE = 1 for potential evaporation
-            pE = 0.75, bare=T)$b # b = rate modifying factor
+            pE = 1, bare=T)$b # pE = 0.75 if open-pan evapo is used, b = rate modifying factor
 #---------- Need solution how to indicate bare = F or T for each month
 
 # Replace negative values in fW with 0
