@@ -19,12 +19,11 @@ library(readr) # read and write as csv
 
 ```{r read and extract, echo=F}
 #### The idea is to create a script which automatically reads data from excel-sheet database with many tabs
-### Cloud location of sheet: 
-## https://uniquelandusede149.sharepoint.com/:x:/s/1_08ProjekteUL2022/ETngkp6ABnpLpmcY818BsJoBIw8DiQxCHEJqeEGT2SelKQ?e=fgagW1
+### Cloud location of sheet: ASK AUTHOR
 # Download a copy into working directory > use getwd() to find out
 
 # Read database (db) from working directory (wd) using readxl
-excel_file <- "C:/Users/t.ruhnau/OneDrive - Unique/Dokumente/EJPSoil_BUFACAP_template.xlsx" # Should work with only the file
+excel_file <- "C:/Users/Dokumente/EJPSoil_BUFACAP_template.xlsx" # Should work with only the file
 
 # Make sure current version of db is in your wd
 all_sheets <- lapply(excel_sheets(excel_file), read_excel, path = excel_file)
@@ -259,10 +258,10 @@ names(list_f_tbl) <-  c("tblf_experiment", "tblf_amendments", "tblf_crops", "tbl
                            "tblf_datasoil", "tblf_soiltype", "tblf_treatment")
 
 # Create output-directory for all tbls
-output_dir_a <- "C:/Users/t.ruhnau/OneDrive - Unique/Dokumente/output/all_tbls/"
+output_dir_a <- "C:/Users/Dokumente/output/all_tbls/"
 
 # Create output-directory filtered tbls
-output_dir_f <- "C:/Users/t.ruhnau/OneDrive - Unique/Dokumente/output/filter_tbls/"
+output_dir_f <- "C:/Users/Dokumente/output/filter_tbls/"
 
 # Save filtered tbls as CSV to /output/filter_tbls
 map2(list_clean_tbl, names(list_clean_tbl), function(df, name) {
