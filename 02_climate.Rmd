@@ -19,20 +19,20 @@ library(sf)
 library(lubridate)
 library(ggplot2)
 ```
-
+This chunk needs monthly climate data from ERA5 as TIF input files 
 ```{r read}
 # Using terra package, faster than raster-package
 temp_data <- terra::rast( # Whole path to wd, usually not necessary
-  "C:/Users/t.ruhnau/OneDrive - Unique/Dokumente/ERA5/ERA5_Land_monthly_temperature_Layer_Stack_westafrica.tif")
+  "C:/Users/Dokumente/ERA5/ERA5_Land_monthly_temperature_Layer_Stack_westafrica.tif")
 prec_data <- terra::rast(
-  "C:/Users/t.ruhnau/OneDrive - Unique/Dokumente/ERA5/ERA5_Land_Monthly_Prec_Layer_Stack_westafrica.tif")
+  "C:/Users/Dokumente/ERA5/ERA5_Land_Monthly_Prec_Layer_Stack_westafrica.tif")
 evapo_data <- terra::rast(
-  "C:/Users/t.ruhnau/OneDrive - Unique/Dokumente/ERA5/ERA5_Land_monthly_potential_evapo_Layer_Stack_westafrica.tif")
+  "C:/Users/Dokumente/ERA5/ERA5_Land_monthly_potential_evapo_Layer_Stack_westafrica.tif")
 evapo_data <- terra::rast(
-  "C:/Users/t.ruhnau/OneDrive - Unique/Dokumente/ERA5/ERA5_Land_monthly_potential_evapo_Layer_Stack_westafrica.tif")
+  "C:/Users/Dokumente/ERA5/ERA5_Land_monthly_potential_evapo_Layer_Stack_westafrica.tif")
 
 # Read filtered tbls from output-directory
-tbl_experiment <- read.csv2("C:/Users/t.ruhnau/OneDrive - Unique/Dokumente/output/filter_tbls/tbl_experiment.csv")
+tbl_experiment <- read.csv2("C:/Users/Dokumente/output/filter_tbls/tbl_experiment.csv")
 ```
 
 ```{r transform}
